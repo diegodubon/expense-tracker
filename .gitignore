@@ -59,3 +59,8 @@ typings/
 
 # next.js build output
 .next
+
+#client modules
+client/node_modules
+client/debug
+client/.env
