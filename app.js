@@ -3,12 +3,10 @@ const Sequelize = require("sequelize");
 const express = require("express");
 
 const app = express();
-
+const config = require("./config");
 const appInit = async () => {
   try {
-    const sequelize = new Sequelize(
-      "postgres://hylagfku:WOd63CDTMrEGaEfSZxyIKW-b_athTQsR@salt.db.elephantsql.com:5432/hylagfku"
-    );
+    const sequelize = new Sequelize(config.dev.db.uri);
 
     await sequelize.authenticate();
     app.listen(process.env.PORT, () => {
