@@ -5,11 +5,32 @@ if (NODE_ENV === "development") {
   require("dotenv/config");
   config = require("./config");
 }
+const express = require("express");
+const bodyParser = require("body-parser");
 
 const db = require("./sequelize");
-const express = require("express");
 
+const itemsRouter = require("./routes/items");
+
+const categoriesRouter = require("./routes/categories");
 const app = express();
+
+//routes
+app.use("/items", itemsRouter);
+app.use("/categories", categoriesRouter);
+
+//middlewares
+app.use(bodyParser.urlencoded({ extended: false }));
+
+//handling not found
+app.use((req, res, next) => {
+  const err = new Error("Not Found");
+  err.status = 404;
+  res.status(404).json({
+    message: "Not Found",
+    code: 404
+  });
+});
 
 const appInit = async () => {
   try {
