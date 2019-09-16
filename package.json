@@ -1,11 +1,12 @@
 {
   "name": "expense-tracker",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "challengeApp",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
     "dev": "supervisor app.js",
+    "client": "cd client && npm start",
     "test": ""
   },
   "repository": {
