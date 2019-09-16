@@ -1,8 +1,16 @@
 const Categorie = require("../models/Categorie");
 
+const { isEmpty } = require("lodash");
 const getCategories = async (req, res) => {
   try {
-    const categories = await Categorie.findAll();
+    const { type } = req.query;
+
+    let where = {};
+
+    if (!isEmpty(type)) {
+      where.type = type;
+    }
+    const categories = await Categorie.findAll({ where });
 
     res.json({
       categories,
@@ -16,21 +24,26 @@ const getCategories = async (req, res) => {
   }
 };
 
-const createCategorie = async (req, res) => {
-  const name = req.body.name;
+const createCategorie = (req, res) => {
+  const { name, type } = req.body;
 
-  if (!name) {
+  if (isEmpty(name)) {
     return res.status(400).json({
       message: "categorie name is required.",
       code: 400
     });
   }
-  try {
-    const newCategorie = await Categorie.create({ name });
-    res.json(newCategorie);
-  } catch (error) {
-    res.status(500).json({ message: error.message, code: 500 });
+
+  if (isEmpty(type)) {
+    return res.status(400).json({
+      message: "type is required.",
+      code: 400
+    });
   }
+
+  Categorie.create({ name, type })
+    .then(categorie => res.status(200).json(categorie))
+    .catch(error => res.status(500).json({ message: error.message }));
 };
 module.exports = {
   getCategories,

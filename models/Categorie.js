@@ -8,7 +8,11 @@ const Categorie = db.define("categories", {
   },
   id: {
     type: Sequelize.INTEGER,
-    primaryKey: true,
+    autoIncrement: true,
+    primaryKey: true
+  },
+  type: {
+    type: Sequelize.STRING,
     allowNull: false
   },
   createdAt: {

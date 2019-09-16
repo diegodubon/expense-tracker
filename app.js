@@ -15,12 +15,13 @@ const itemsRouter = require("./routes/items");
 const categoriesRouter = require("./routes/categories");
 const app = express();
 
+//middlewares
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 //routes
 app.use("/items", itemsRouter);
 app.use("/categories", categoriesRouter);
-
-//middlewares
-app.use(bodyParser.urlencoded({ extended: false }));
 
 //handling not found
 app.use((req, res, next) => {
