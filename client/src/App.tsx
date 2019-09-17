@@ -3,6 +3,8 @@ import React, { Component } from "react";
 import Navbar from "./components/Layout/Navbar";
 import Sidebar from "./components/Layout/Sidebar";
 import Items from "./containers/Items";
+
+import Spinner from "./components/Spinner";
 import "materialize-css/dist/css/materialize.min.css";
 
 interface State {
@@ -49,6 +51,7 @@ class App extends Component<{}, State> {
 
             <div className="col s9">
               <div className="row">
+                <Spinner />
                 {userExist ? (
                   <Items />
                 ) : (

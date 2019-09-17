@@ -13,6 +13,7 @@ const db = require("./sequelize");
 const itemsRouter = require("./routes/items");
 
 const categoriesRouter = require("./routes/categories");
+const usersRouter = require("./routes/users");
 const app = express();
 
 //middlewares
@@ -22,6 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //routes
 app.use("/items", itemsRouter);
 app.use("/categories", categoriesRouter);
+app.use("/users", usersRouter);
 
 //handling not found
 app.use((req, res, next) => {
