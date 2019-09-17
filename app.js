@@ -7,6 +7,7 @@ if (NODE_ENV === "development") {
 }
 const express = require("express");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 const db = require("./sequelize");
 
@@ -19,11 +20,11 @@ const app = express();
 //middlewares
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+app.use(cors());
 //routes
-app.use("/items", itemsRouter);
-app.use("/categories", categoriesRouter);
-app.use("/users", usersRouter);
+app.use("/api/items", itemsRouter);
+app.use("/api/categories", categoriesRouter);
+app.use("/api/users", usersRouter);
 
 //handling not found
 app.use((req, res, next) => {

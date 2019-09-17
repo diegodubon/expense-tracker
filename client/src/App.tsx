@@ -5,10 +5,18 @@ import Sidebar from "./components/Layout/Sidebar";
 import Items from "./containers/Items";
 
 import Spinner from "./components/Spinner";
+
+import { getUser, postUser } from "./api/user";
 import "materialize-css/dist/css/materialize.min.css";
+import { any } from "prop-types";
 
 interface State {
   name: string;
+  user?: {
+    name: string;
+    id: number;
+  };
+  isLoading: boolean;
   userExist: boolean;
 }
 
@@ -23,6 +31,7 @@ const validateUser = (): boolean => {
 class App extends Component<{}, State> {
   state: State = {
     name: "",
+    isLoading: false,
     userExist: validateUser()
   };
 
@@ -30,14 +39,57 @@ class App extends Component<{}, State> {
     this.setState({ name: event.target.value });
   };
 
-  saveUser = (e: any) => {
+  saveUser = async (e: any) => {
     const { name } = this.state;
 
     if (name) {
-      localStorage.setItem("expense_tracker_user", name);
-      this.setState({ userExist: true });
+      try {
+        const user = await postUser(name);
+
+        localStorage.setItem("expense_tracker_user", JSON.stringify(user));
+        this.setState({
+          userExist: true,
+          name: user.name,
+          user: {
+            name: user.name,
+            id: user.id
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
+
+  componentDidMount() {
+    type user = {
+      id: number;
+      name: string;
+    };
+    let local = localStorage.getItem("expense_tracker_user");
+
+    if (local) {
+      const user: user = JSON.parse(local);
+      console.log({ user });
+      getUser(user.id)
+        .then((user: any) => {
+          this.setState({
+            user: {
+              name: user.name,
+              id: user.id
+            },
+            isLoading: false
+          });
+          console.log({ user });
+        })
+        .catch((error: any) => {
+          console.log(error);
+          this.setState({
+            isLoading: false
+          });
+        });
+    }
+  }
   render() {
     const { userExist } = this.state;
     return (
