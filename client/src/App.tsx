@@ -1,19 +1,43 @@
 import React, { Component } from "react";
 
-import Navbar from "./components/Layout/NavBar";
+import Navbar from "./components/Layout/Navbar";
+import Sidebar from "./components/Layout/Sidebar";
+import Items from "./containers/Items";
 import "materialize-css/dist/css/materialize.min.css";
 
-type State = {
+interface State {
   name: string;
-  secondName: String;
-};
+  userExist: boolean;
+}
 
+const validateUser = (): boolean => {
+  let userExist: boolean = false;
+
+  if (localStorage.getItem("expense_tracker_user")) {
+    userExist = true;
+  }
+  return userExist;
+};
 class App extends Component<{}, State> {
   state: State = {
     name: "",
-    secondName: "adasd"
+    userExist: validateUser()
+  };
+
+  onChange = (event: any) => {
+    this.setState({ name: event.target.value });
+  };
+
+  saveUser = (e: any) => {
+    const { name } = this.state;
+
+    if (name) {
+      localStorage.setItem("expense_tracker_user", name);
+      this.setState({ userExist: true });
+    }
   };
   render() {
+    const { userExist } = this.state;
     return (
       <div className="App">
         <Navbar />
@@ -21,24 +45,30 @@ class App extends Component<{}, State> {
         <div className="container">
           <div className="row"></div>
           <div className="row">
-            <div className="col s3">
-              {/* <div className='input-field col s6'>
-                <input value='Alvin' id='first_name2' type='text' className='validate' />
-                <label className='active'>Income</label>
-              </div> */}
-            </div>
+            <Sidebar />
 
             <div className="col s9">
               <div className="row">
-                <div className="input-field col s6">
-                  <input
-                    value={this.state.secondName}
-                    id="first_name2"
-                    type="text"
-                    className="validate"
-                  />
-                  <label className="active">Name</label>
-                </div>
+                {userExist ? (
+                  <Items />
+                ) : (
+                  <div className="input-field col s6">
+                    <input
+                      onChange={this.onChange}
+                      value={this.state.name}
+                      id="first_name2"
+                      type="text"
+                      className="validate"
+                    />
+                    <label className="active">Name</label>
+                    <a
+                      className="waves-effect waves-light btn"
+                      onClick={this.saveUser}
+                    >
+                      button
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>
