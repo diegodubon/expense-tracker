@@ -23,14 +23,23 @@ interface State {
 const validateUser = (): boolean => {
   let userExist: boolean = false;
 
-  if (localStorage.getItem("expense_tracker_user")) {
+  let username = localStorage.getItem("expense_tracker_user_id");
+  let userId = localStorage.getItem("expense_tracker_username");
+  if (username && userId) {
     userExist = true;
   }
+
+  console.log({ userExist });
   return userExist;
 };
 class App extends Component<{}, State> {
   state: State = {
     name: "",
+
+    user: {
+      name: "",
+      id: 0
+    },
     isLoading: false,
     userExist: validateUser()
   };
@@ -41,13 +50,18 @@ class App extends Component<{}, State> {
 
   saveUser = async (e: any) => {
     const { name } = this.state;
-
+    console.log({ state: this.state });
     if (name) {
       try {
-        const user = await postUser(name);
+        this.setState({ isLoading: true });
 
-        localStorage.setItem("expense_tracker_user", JSON.stringify(user));
+        const user = await postUser(name);
+        console.log({ user });
+        localStorage.setItem("expense_tracker_username", user.name);
+        localStorage.setItem("expense_tracker_user_id", user.id);
+
         this.setState({
+          isLoading: false,
           userExist: true,
           name: user.name,
           user: {
@@ -57,6 +71,7 @@ class App extends Component<{}, State> {
         });
       } catch (error) {
         console.log(error);
+        this.setState({ isLoading: false });
       }
     }
   };
@@ -66,14 +81,22 @@ class App extends Component<{}, State> {
       id: number;
       name: string;
     };
-    let local = localStorage.getItem("expense_tracker_user");
+    let username = localStorage.getItem("expense_tracker_username");
+    let userId = localStorage.getItem("expense_tracker_user_id");
 
-    if (local) {
-      const user: user = JSON.parse(local);
-      console.log({ user });
-      getUser(user.id)
+    console.log({ username, userId });
+    const user = {
+      username,
+      id: userId
+    };
+    console.log({ user });
+
+    if (username && userId) {
+      this.setState({ isLoading: true });
+      getUser(userId)
         .then((user: any) => {
           this.setState({
+            name: user.name,
             user: {
               name: user.name,
               id: user.id
@@ -91,19 +114,21 @@ class App extends Component<{}, State> {
     }
   }
   render() {
-    const { userExist } = this.state;
+    const { userExist, user, name } = this.state;
+    console.log(this.state);
     return (
       <div className="App">
         <Navbar />
 
         <div className="container">
-          <div className="row"></div>
+          <div className="row">
+            {user && user.name ? `Welcome : ${name}` : null}
+          </div>
           <div className="row">
             <Sidebar />
-
             <div className="col s9">
               <div className="row">
-                <Spinner />
+                {this.state.isLoading ? <Spinner /> : null}
                 {userExist ? (
                   <Items />
                 ) : (

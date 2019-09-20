@@ -27,10 +27,11 @@ const createUser = async (req, res) => {
     });
   }
   try {
-    const newUser = await User.create({ name });
+    const newUser = await User.findOrCreate({ where: { name } });
 
     console.log({ newUser });
-    res.json(newUser);
+
+    res.json(newUser[0]);
   } catch (error) {
     console.error(error);
     res.json({ message: error.message });

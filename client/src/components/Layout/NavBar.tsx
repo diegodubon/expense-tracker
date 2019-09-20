@@ -1,6 +1,6 @@
 import React from "react";
 
-const NavBar: React.FC = () => {
+const Navbar: React.FC = () => {
   return (
     <nav>
       <div className="nav-wrapper teal ">
@@ -13,4 +13,4 @@ const NavBar: React.FC = () => {
   );
 };
 
-export default NavBar;
+export default Navbar;

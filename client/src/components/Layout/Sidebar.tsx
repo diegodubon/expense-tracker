@@ -3,18 +3,18 @@ import React from "react";
 const Sidebar: React.FC = () => {
   return (
     <div className="col s3">
-      <ul id="slide-out" className="sidenav     ">
-        <li>
-          <a href="#!">First Sidebar Link</a>
+      <ul className="collection">
+        <li className="collection-item">
+          <a className="waves-effect waves-light btn">Add Expense</a>
         </li>
-        <li>
-          <a href="#!">Second Sidebar Link</a>
+        <li className="collection-item">
+          <a className="waves-effect waves-light btn">Add Income</a>
         </li>
       </ul>
 
-      <a href="#" data-target="slide-out" className="sidenav-trigger">
+      {/* <a href="#" data-target="slide-out" className="sidenav-trigger">
         <i className="material-icons">menu</i>
-      </a>
+      </a> */}
     </div>
   );
 };
