@@ -45,6 +45,10 @@ const appInit = async () => {
     });
     console.log("Connection has been established successfully.");
 
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname + "/client/public/index.html"));
+    });
+
     app.listen(PORT, () => {
       console.log(`Server Running on ${PORT}`);
     });
