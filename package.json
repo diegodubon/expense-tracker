@@ -4,10 +4,9 @@
   "description": "challengeApp",
   "main": "app.js",
   "scripts": {
-    "start": "node app.js",
-    "dev": "supervisor app.js",
-    "client": "cd client && npm start",
-    "test": ""
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "supervisor app.js",
+    "client": "cd client && npm start"
   },
   "repository": {
     "type": "git",
