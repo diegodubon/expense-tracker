@@ -1,11 +1,13 @@
 import React, { Component } from "react";
+import { Route, BrowserRouter as Router, Link } from "react-router-dom";
 
 import Navbar from "./components/Layout/Navbar";
 import Sidebar from "./components/Layout/Sidebar";
 import Items from "./containers/Items";
 
 import Spinner from "./components/Spinner";
-
+import Form from "./containers/Form";
+import Main from "./containers/Home";
 import { getUser, postUser } from "./api/user";
 import "materialize-css/dist/css/materialize.min.css";
 import { any } from "prop-types";
@@ -35,7 +37,6 @@ const validateUser = (): boolean => {
 class App extends Component<{}, State> {
   state: State = {
     name: "",
-
     user: {
       name: "",
       id: 0
@@ -50,13 +51,13 @@ class App extends Component<{}, State> {
 
   saveUser = async (e: any) => {
     const { name } = this.state;
-    console.log({ state: this.state });
+
     if (name) {
       try {
         this.setState({ isLoading: true });
 
         const user = await postUser(name);
-        console.log({ user });
+
         localStorage.setItem("expense_tracker_username", user.name);
         localStorage.setItem("expense_tracker_user_id", user.id);
 
@@ -70,7 +71,6 @@ class App extends Component<{}, State> {
           }
         });
       } catch (error) {
-        console.log(error);
         this.setState({ isLoading: false });
       }
     }
@@ -84,12 +84,10 @@ class App extends Component<{}, State> {
     let username = localStorage.getItem("expense_tracker_username");
     let userId = localStorage.getItem("expense_tracker_user_id");
 
-    console.log({ username, userId });
     const user = {
       username,
       id: userId
     };
-    console.log({ user });
 
     if (username && userId) {
       this.setState({ isLoading: true });
@@ -103,7 +101,6 @@ class App extends Component<{}, State> {
             },
             isLoading: false
           });
-          console.log({ user });
         })
         .catch((error: any) => {
           console.log(error);
@@ -114,45 +111,37 @@ class App extends Component<{}, State> {
     }
   }
   render() {
-    const { userExist, user, name } = this.state;
-    console.log(this.state);
+    const { userExist, user, name, isLoading } = this.state;
+
     return (
       <div className="App">
         <Navbar />
 
-        <div className="container">
-          <div className="row">
-            {user && user.name ? `Welcome : ${name}` : null}
-          </div>
-          <div className="row">
+        <Router>
+          <div className="container">
+            <div className="row">
+              {user && user.name ? `Welcome : ${name}` : null}
+            </div>
+
             <Sidebar />
             <div className="col s9">
-              <div className="row">
-                {this.state.isLoading ? <Spinner /> : null}
-                {userExist ? (
-                  <Items />
-                ) : (
-                  <div className="input-field col s6">
-                    <input
-                      onChange={this.onChange}
-                      value={this.state.name}
-                      id="first_name2"
-                      type="text"
-                      className="validate"
-                    />
-                    <label className="active">Name</label>
-                    <a
-                      className="waves-effect waves-light btn"
-                      onClick={this.saveUser}
-                    >
-                      button
-                    </a>
-                  </div>
+              <Route
+                exact
+                path="/"
+                component={() => (
+                  <Main
+                    name={name}
+                    saveUser={this.saveUser}
+                    onChange={this.onChange}
+                    userExist={userExist}
+                    isLoading={isLoading}
+                  />
                 )}
-              </div>
+              />
+              <Route exact path="/add/expense" component={Form} />
             </div>
           </div>
-        </div>
+        </Router>
       </div>
     );
   }
