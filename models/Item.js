@@ -1,11 +1,13 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 
+const Category = require("./Categorie");
+const User = require("./User");
 const Item = db.define("items", {
   id: {
     type: Sequelize.INTEGER,
     primaryKey: true,
-    allowNull: false
+    autoIncrement: true
   },
   name: {
     type: Sequelize.STRING,
@@ -41,4 +43,6 @@ const Item = db.define("items", {
   }
 });
 
+Item.belongsTo(Category, { foreignKey: "categoryId" });
+Item.belongsTo(User, { foreignKey: "userId" });
 module.exports = Item;

@@ -3,6 +3,11 @@ import Spinner from "../components/Spinner";
 import Items from "../containers/Items";
 import Sidebar from "../components/Layout/Sidebar";
 class Main extends Component<any, any> {
+  onChange = (event: any) => {
+    console.log(event.target.value);
+    this.props.setName(event.target.value);
+  };
+
   render() {
     return (
       <div className="row">
@@ -12,18 +17,21 @@ class Main extends Component<any, any> {
         ) : (
           <div className="input-field col s6">
             <input
-              onChange={this.props.onChange}
+              ref={input => input && input.focus()}
+              autoFocus
+              name="username"
+              onChange={this.onChange}
               value={this.props.name}
-              id="first_name2"
+              id="username"
               type="text"
-              className="validate"
+              // className='validate'
             />
             <label className="active">Name</label>
             <a
               className="waves-effect waves-light btn"
               onClick={this.props.saveUser}
             >
-              button
+              Save
             </a>
           </div>
         )}

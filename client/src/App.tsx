@@ -12,12 +12,16 @@ import { getUser, postUser } from "./api/user";
 import "materialize-css/dist/css/materialize.min.css";
 import { any } from "prop-types";
 
+import $ from "jquery";
+
+interface User {
+  name?: string;
+  id?: string;
+}
 interface State {
   name: string;
-  user?: {
-    name: string;
-    id: number;
-  };
+  user?: User;
+  userId?: string;
   isLoading: boolean;
   userExist: boolean;
 }
@@ -37,9 +41,10 @@ const validateUser = (): boolean => {
 class App extends Component<{}, State> {
   state: State = {
     name: "",
+    userId: "",
     user: {
       name: "",
-      id: 0
+      id: ""
     },
     isLoading: false,
     userExist: validateUser()
@@ -51,13 +56,12 @@ class App extends Component<{}, State> {
 
   saveUser = async (e: any) => {
     const { name } = this.state;
+    try {
+      this.setState({ isLoading: true });
 
-    if (name) {
-      try {
-        this.setState({ isLoading: true });
+      const user = await postUser(name);
 
-        const user = await postUser(name);
-
+      if (user) {
         localStorage.setItem("expense_tracker_username", user.name);
         localStorage.setItem("expense_tracker_user_id", user.id);
 
@@ -65,15 +69,22 @@ class App extends Component<{}, State> {
           isLoading: false,
           userExist: true,
           name: user.name,
+          userId: user.id,
           user: {
             name: user.name,
             id: user.id
           }
         });
-      } catch (error) {
-        this.setState({ isLoading: false });
       }
+    } catch (error) {
+      this.setState({ isLoading: false });
     }
+  };
+
+  setName = (name: string) => {
+    this.setState({
+      name
+    });
   };
 
   componentDidMount() {
@@ -111,8 +122,8 @@ class App extends Component<{}, State> {
     }
   }
   render() {
-    const { userExist, user, name, isLoading } = this.state;
-
+    const { userExist, user, userId, name, isLoading } = this.state;
+    console.log({ userId });
     return (
       <div className="App">
         <Navbar />
@@ -130,7 +141,10 @@ class App extends Component<{}, State> {
                 path="/"
                 component={() => (
                   <Main
+                    key={name}
+                    userId={userId}
                     name={name}
+                    setName={this.setName}
                     saveUser={this.saveUser}
                     onChange={this.onChange}
                     userExist={userExist}
@@ -138,7 +152,16 @@ class App extends Component<{}, State> {
                   />
                 )}
               />
-              <Route exact path="/add/expense" component={Form} />
+              <Route
+                exact
+                path="/add/expense"
+                component={(props: any) => <Form {...props} userId={userId} />}
+              />
+              <Route
+                exact
+                path="/add/income"
+                component={(props: any) => <Form {...props} userId={userId} />}
+              />
             </div>
           </div>
         </Router>
